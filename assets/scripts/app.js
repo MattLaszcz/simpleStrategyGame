@@ -17,16 +17,34 @@ const enteredValue = prompt('Maximum life for you and the monster','100');
 let battleLog = [];
 
 
-let chosenMaxLife = parseInt(enteredValue);
-let currentMonsterHealth = chosenMaxLife;
 
-if (isNaN(chosenMaxLife || chosenMaxLife <= 0)) { //chosenMaxLife is NaN is checked first before running the OR operator.
-  chosenMaxLife = 100;
+//let currentMonsterHealth = chosenMaxLife;
+let lastLoggedEntry; 
+
+function getMaxLifeValues () {
+  const enteredValue = prompt('Maximum life for you and the monster','100');
+  const parsedValue = parseInt(enteredValue);
+  if (isNaN(parsedValue || parsedValue <= 0)) { //chosenMaxLife is NaN is checked first before running the OR operator.
+    throw {message: 'Invalid user input, not a number!' };
+  }
+return parsedValue;
 }
 
-let currentPlayerHealth = chosenMaxLife;
+let chosenMaxLife;
 
-let hasBonusLife = true; 
+try {
+chosenMaxLife = getMaxLifeValues();
+} catch (error) { // error can be any name it will get its value from "throw" in the getMaxLifeValues function.
+  console.log(error);
+  chosenMaxLife = 100;
+} finally { //code in finally will always run no matter what. 
+  
+}
+
+
+let currentMonsterHealth = chosenMaxLife;
+let currentPlayerHealth = chosenMaxLife;
+let hasBonusLife = true;
 
 adjustHealthBars(chosenMaxLife);
 
@@ -199,10 +217,27 @@ endRound();
 }
 
 function printLogHandler () {
-  console.log(battleLog);
+  for (let i = 0; i< 3; i++){ // i++ will run after your last semicolon in the loop.
+    console.log('-------');
+  }
+ /*for ( let i = 0; i < battleLog.length; i++) {
+    console.log(battleLog[i]);
+  }*/
+  let i = 0;
+  for (const logEntry of battleLog) { // The const defined is created for every loop iteration. const created in the loop are only new and used in that loop and cant be called after outside of the loop.
+      if (!lastLoggedEntry && lastLoggedEntry !== 0 || lastLoggedEntry < i) { // remember that 0 is a falsy value 
+      console.log(`#${i}`);
+      for (const key in logEntry) {//inner loop has to complete before outer loop iteration up
+        console.log(`${key} => ${logEntry[key]}`);
+      }
+      lastLoggedEntry = i;
+      break;// stops the loop in which you call it directly. It will only stop the nearest loop. Using labeled statement loops you can name: do{} a loop then break name; loop 
+    }
+      i++;
+  }  
 }
 
 attackBtn.addEventListener('click',attackHandler);
 strongAttackBtn.addEventListener('click', strongAttackHandler);
 healBtn.addEventListener('click',healPlayerHandler);
-logBtn.addEventListener('Click', printLogHandler);
+logBtn.addEventListener('click', printLogHandler);
